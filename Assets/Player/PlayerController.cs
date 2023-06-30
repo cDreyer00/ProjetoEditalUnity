@@ -7,19 +7,36 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] float speed;
     [SerializeField] float rotationSpeed;
+    [SerializeField] float jumpForce;
 
     Rigidbody rb;
     Vector3 curDir;
 
     bool run;
+    bool canJump;
+    bool triggerJump;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb = StandardtRbValues(rb);
+        rb = StandardRbValues(rb);
+
     }
 
     void Update()
+    {
+        CheckMove();
+        Rotate();
+        CheckJump();
+    }
+
+    void FixedUpdate()
+    {
+        Move();
+        Jump();
+    }
+
+    void CheckMove()
     {
         Vector3 dir = Vector3.zero;
 
@@ -39,18 +56,43 @@ public class PlayerController : MonoBehaviour
 
         curDir = dir;
 
+    }
+
+    void Move()
+    {
+        float s = run ? speed * 2 : speed;
+        rb.MovePosition(transform.position + curDir.normalized * s * Time.deltaTime);
+    }
+
+    void Rotate()
+    {
         transform.Rotate(Vector3.up, CursorController.Instance.CursorDir(rotationSpeed).x);
     }
 
-    void FixedUpdate()
+    void CheckJump()
     {
-        float s = run ? speed * 2 : speed;
-        Move(curDir.normalized, s);
+        canJump = Physics.Raycast(transform.position * 0.5f, Vector3.down, 0.55f);
+
+        if (!canJump) return;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            triggerJump = true;
+            canJump = false;
+        }
     }
 
-    void Move(Vector3 dir, float speed) => rb.MovePosition(transform.position + dir * speed * Time.deltaTime);
+    void Jump()
+    {
+        if (!triggerJump) return;
+        triggerJump = false;
 
-    Rigidbody StandardtRbValues(Rigidbody baseRb)
+        Debug.Log("Jump");
+
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    }
+
+    Rigidbody StandardRbValues(Rigidbody baseRb)
     {
         baseRb.isKinematic = false;
         baseRb.collisionDetectionMode = CollisionDetectionMode.Continuous;
