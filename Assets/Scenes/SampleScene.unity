@@ -575,5 +575,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6942292363139106793, guid: 9391cd6bbe80bf04cabea86ece1642f4, type: 3}
+      propertyPath: rotSensitivity
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9391cd6bbe80bf04cabea86ece1642f4, type: 3}

@@ -20,7 +20,6 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb = StandardRbValues(rb);
-
     }
 
     void Update()

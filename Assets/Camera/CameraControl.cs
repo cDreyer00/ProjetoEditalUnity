@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraControl : MonoBehaviour
 {
     [SerializeField] Transform rotationPoint;
-    [SerializeField] float sensitivity;
+    [SerializeField] float rotSensitivity;
 
     [Range(-1, 1)]
     [SerializeField] float minRot, maxRot;
@@ -13,7 +13,7 @@ public class CameraControl : MonoBehaviour
     void Update()
     {
         Quaternion prevRot = rotationPoint.localRotation;
-        rotationPoint.Rotate(Vector3.left, CursorController.Instance.CursorDir(sensitivity).y);
+        rotationPoint.Rotate(Vector3.left, CursorController.Instance.CursorDir(rotSensitivity).y);
 
         if (curPointRot.x < minRot)
             rotationPoint.localRotation = new Quaternion(minRot, prevRot.y, prevRot.z, prevRot.w);

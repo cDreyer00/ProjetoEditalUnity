@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationPoint: {fileID: 205052267575512645}
-  sensitivity: 3
+  rotSensitivity: 3
   minRot: -0.2
   maxRot: 0.4
 --- !u!1 &205052267575512698
