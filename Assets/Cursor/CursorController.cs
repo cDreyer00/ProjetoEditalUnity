@@ -38,5 +38,4 @@ public class CursorController : Singleton<CursorController>
         sensitivity = sensitivity == 0 ? this.sensitivity : sensitivity;
         return new Vector3(MouseX, MouseY, 0) * sensitivity;
     }
-
 }
