@@ -6,17 +6,17 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float speed;
-    [SerializeField] CursorController cursor;
+    [SerializeField] float rotationSpeed;
 
     Rigidbody rb;
     Vector3 curDir;
+
+    bool run;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb = StandardtRbValues(rb);
-
-        cursor.Init();
     }
 
     void Update()
@@ -35,13 +35,17 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
             dir += transform.right;
 
+        run = Input.GetKey(KeyCode.LeftShift);
+
         curDir = dir;
 
-        transform.Rotate(Vector3.up, cursor.CursorDir.x);
+        transform.Rotate(Vector3.up, CursorController.Instance.CursorDir(rotationSpeed).x);
     }
+
     void FixedUpdate()
     {
-        Move(curDir.normalized, speed);
+        float s = run ? speed * 2 : speed;
+        Move(curDir.normalized, s);
     }
 
     void Move(Vector3 dir, float speed) => rb.MovePosition(transform.position + dir * speed * Time.deltaTime);

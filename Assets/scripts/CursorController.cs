@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class CursorController
+public class CursorController : Singleton<CursorController>
 {
     [SerializeField] float sensitivity;
 
@@ -27,12 +27,16 @@ public class CursorController
         }
     }
 
-    public void Init()
+    void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    public Vector3 CursorDir => new Vector3(MouseX, MouseY, 0) * sensitivity;
+    public Vector3 CursorDir(float sensitivity = 0)
+    {
+        sensitivity = sensitivity == 0 ? this.sensitivity : sensitivity;
+        return new Vector3(MouseX, MouseY, 0) * sensitivity;
+    }
 
 }
