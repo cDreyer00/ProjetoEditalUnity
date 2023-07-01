@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float rotationSpeed;
     [SerializeField] float jumpForce;
     [SerializeField] Animator animController;
+    [SerializeField] DirType curDirType;
 
     Rigidbody rb;
     Vector3 curDir;
@@ -46,27 +47,33 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 dir = Vector3.zero;
 
-        if (Input.GetKey(KeyCode.W))
+        bool goForward = Input.GetKey(KeyCode.W);
+        bool goBack = Input.GetKey(KeyCode.S);
+        bool goLeft = Input.GetKey(KeyCode.A);
+        bool goRight = Input.GetKey(KeyCode.D);
+
+        if (goForward)
             dir += transform.forward;
 
-        if (Input.GetKey(KeyCode.S))
+        if (goBack)
             dir += -transform.forward;
 
-        if (Input.GetKey(KeyCode.A))
+        if (goLeft)
             dir += -transform.right;
 
-        if (Input.GetKey(KeyCode.D))
+        if (goRight)
             dir += transform.right;
 
         run = Input.GetKey(KeyCode.LeftShift);
 
         curDir = dir;
+        curDirType = CheckDirType(goForward, goBack, goLeft, goRight);
     }
 
     void Move()
     {
         bool isMoving = curDir.magnitude != 0;
-        
+
         animController.SetBool("move", isMoving);
         if (isMoving)
             animController.SetBool("run", run);
@@ -79,6 +86,38 @@ public class PlayerController : MonoBehaviour
         float s = run ? runSpeed : speed;
         s *= curAccel;
         rb.MovePosition(transform.position + curDir.normalized * s * Time.deltaTime);
+    }
+
+    DirType CheckDirType(bool goF, bool goB, bool goL, bool goR)
+    {
+        if (!goF && !goB && !goL && !goR)
+            return DirType.None;
+
+        if (goF && goL)
+            return DirType.FL;
+
+        if (goF && goR)
+            return DirType.FR;
+
+        if (goB && goL)
+            return DirType.BL;
+
+        if (goB && goR)
+            return DirType.BR;
+
+        if (goF)
+            return DirType.F;
+
+        if (goB)
+            return DirType.B;
+
+        if (goL)
+            return DirType.L;
+
+        if (goR)
+            return DirType.R;
+
+        return DirType.None;
     }
 
     void SpeedUp()
@@ -128,5 +167,12 @@ public class PlayerController : MonoBehaviour
         baseRb.constraints = RigidbodyConstraints.FreezeRotation;
         return baseRb;
     }
+}
 
+public enum DirType
+{
+    None,
+    F, FL, FR,
+    B, BL, BR,
+    L, R,
 }
