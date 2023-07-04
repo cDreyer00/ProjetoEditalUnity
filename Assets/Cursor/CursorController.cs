@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class CursorController : Singleton<CursorController>
 {
-    [SerializeField] float sensitivity;
+    [SerializeField] float sensitivity = 1;
 
     float _mouseX = 0;
     float MouseX
@@ -33,9 +33,11 @@ public class CursorController : Singleton<CursorController>
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    public Vector3 CursorDir(float sensitivity = 0)
+    public Vector2 CursorDir(float sensitivity = 0)
     {
         sensitivity = sensitivity == 0 ? this.sensitivity : sensitivity;
-        return new Vector3(MouseX, MouseY, 0) * sensitivity;
+        return CursorDir(sensitivity, sensitivity);
     }
+
+    public Vector2 CursorDir(float xSens, float ySens) => new Vector2(MouseX * xSens, MouseY * ySens);
 }

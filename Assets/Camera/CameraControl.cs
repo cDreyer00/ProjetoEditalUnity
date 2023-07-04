@@ -2,25 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class CameraControl : MonoBehaviour
 {
-    [SerializeField] Transform rotationPoint;
-    [SerializeField] float rotSensitivity;
+    [Header("Cam Params")]
+    [SerializeField] Transform target;
+    [SerializeField] float dist;
+    [SerializeField] Quaternion relativeRot;
 
-    [Range(-1, 1)]
-    [SerializeField] float minRot, maxRot;
+    [Space]
 
-    void Update()
+    [SerializeField] float maxYPos;
+    [SerializeField] float minYPos;
+    [SerializeField] float xSens;
+    [SerializeField] float ySens;
+
+    [SerializeField] private float currentXRotation = 0f;
+    [SerializeField] private float currentYRotation = 0f;
+
+    void LateUpdate()
     {
-        Quaternion prevRot = rotationPoint.localRotation;
-        rotationPoint.Rotate(Vector3.left, CursorController.Instance.CursorDir(rotSensitivity).y);
+        if (!target) return;
 
-        if (curPointRot.x < minRot)
-            rotationPoint.localRotation = new Quaternion(minRot, prevRot.y, prevRot.z, prevRot.w);
+        Vector2 cursorDir = Vector2.zero;
+        if (Application.isPlaying)
+            cursorDir = CursorController.Instance.CursorDir(xSens, ySens);
 
-        if (curPointRot.x > maxRot)
-            rotationPoint.localRotation = new Quaternion(maxRot, prevRot.y, prevRot.z, prevRot.w);
+        UpdateCam(cursorDir);
     }
 
-    Quaternion curPointRot => rotationPoint.localRotation;
+    void UpdateCam(Vector2 moveDir)
+    {
+        // Get the current target position and camera position and apply distance
+        Vector3 targetPos = target.position;
+        Vector3 cameraPos = targetPos - transform.forward * dist;
+
+        // Apply rotation around the target based on cursor movement
+        currentYRotation += moveDir.x;
+        currentYRotation = Mathf.Clamp(currentYRotation, minYPos, maxYPos);
+        Quaternion rotation = Quaternion.Euler(moveDir.y, currentYRotation, 0f);
+
+        // Calculate the new camera position
+        Vector3 newPos = targetPos + rotation * relativeRot * Vector3.back * dist;
+
+        // Apply the new position to the camera
+        transform.position = newPos;
+        transform.LookAt(targetPos);
+    }
+
+    Quaternion curPointRot => transform.localRotation;
 }

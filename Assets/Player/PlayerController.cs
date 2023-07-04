@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
 
     float curAccel;
 
+    bool rotate = false;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -33,8 +35,13 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckMove();
-        Rotate();
+        if (rotate) Rotate();
         CheckJump();
+
+        if (Input.GetKeyDown(KeyCode.Mouse2))
+        {
+            rotate = !rotate;
+        }
     }
 
     void FixedUpdate()
