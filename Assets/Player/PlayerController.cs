@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce;
     [SerializeField] Animator animController;
     [SerializeField] DirType curDirType;
+    [SerializeField] Transform orientation;
 
     Rigidbody rb;
     Vector3 curDir;
@@ -37,6 +38,8 @@ public class PlayerController : MonoBehaviour
         CheckMove();
         if (rotate) Rotate();
         CheckJump();
+        SetOrientation();
+
 
         if (Input.GetKeyDown(KeyCode.Mouse2))
         {
@@ -170,6 +173,11 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 
+    void SetOrientation()
+    {
+
+    }
+
     Rigidbody StandardRbValues(Rigidbody baseRb)
     {
         baseRb.isKinematic = false;
@@ -190,7 +198,7 @@ public class PlayerController : MonoBehaviour
             DirType.BR => new Vector2(1, -1),
             DirType.L => new Vector2(-1, 0),
             DirType.R => new Vector2(1, 0),
-            _=> Vector2.zero
+            _ => Vector2.zero
         };
 
         return v;
