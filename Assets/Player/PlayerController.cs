@@ -80,15 +80,18 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         bool isMoving = curDir.magnitude != 0;
-
         animController.SetBool("move", isMoving);
-        if (isMoving)
-            animController.SetBool("run", run);
 
-        if (!isMoving)
-            SlowDown();
-        else
-            SpeedUp();
+        Vector2 dir = DirTypeToVector(curDirType);
+        animController.SetFloat("x", dir.x);
+        animController.SetFloat("z", dir.y);
+
+        if (isMoving)
+
+            if (!isMoving)
+                SlowDown();
+            else
+                SpeedUp();
 
         float s = run ? runSpeed : speed;
         s *= curAccel;
@@ -173,6 +176,24 @@ public class PlayerController : MonoBehaviour
         baseRb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         baseRb.constraints = RigidbodyConstraints.FreezeRotation;
         return baseRb;
+    }
+
+    Vector2 DirTypeToVector(DirType dt)
+    {
+        Vector2 v = dt switch
+        {
+            DirType.F => new Vector2(0, 1),
+            DirType.FL => new Vector2(-1, 1),
+            DirType.FR => new Vector2(1, 1),
+            DirType.B => new Vector2(0, -1),
+            DirType.BL => new Vector2(-1, -1),
+            DirType.BR => new Vector2(1, -1),
+            DirType.L => new Vector2(-1, 0),
+            DirType.R => new Vector2(1, 0),
+            _=> Vector2.zero
+        };
+
+        return v;
     }
 }
 
