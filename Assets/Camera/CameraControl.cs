@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class CameraControl : MonoBehaviour
+public class CameraControl : Singleton<CameraControl>
 {
     [SerializeField] Transform target;
     [SerializeField] Transform camera;
     [SerializeField] float rotationSpeed = 5f;
 
-    [SerializeField] Vector3 offset;
+    [SerializeField] Vector3 posOffset;
+    [SerializeField] Vector3 camPosOffset;
     [SerializeField] Vector3 rot;
     [SerializeField] float maxXRot;
     [SerializeField] float minXRot;
@@ -19,9 +20,9 @@ public class CameraControl : MonoBehaviour
         if (!target) return;
         if (!camera) return;
 
-        transform.position = target.position;
-        camera.transform.localPosition = Vector3.zero + offset;
-        camera.LookAt(target);
+        transform.position = target.position + posOffset;
+        camera.transform.localPosition = Vector3.zero + camPosOffset;
+        camera.LookAt(transform.position);
 
         Vector2 cursorDir = Vector2.zero;
         if (Application.isPlaying)
@@ -33,4 +34,6 @@ public class CameraControl : MonoBehaviour
 
         transform.eulerAngles = rot;
     }
+
+    public Vector3 GetPointingDir() => transform.forward;
 }

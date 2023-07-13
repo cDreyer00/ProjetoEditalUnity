@@ -36,15 +36,9 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckMove();
-        if (rotate) Rotate();
+        Rotate();
         CheckJump();
         SetOrientation();
-
-
-        if (Input.GetKeyDown(KeyCode.Mouse2))
-        {
-            rotate = !rotate;
-        }
     }
 
     void FixedUpdate()
@@ -147,7 +141,11 @@ public class PlayerController : MonoBehaviour
 
     void Rotate()
     {
-        transform.Rotate(Vector3.up, CursorController.Instance.CursorDir(rotationSpeed).x);
+        Vector3 camDir = CameraControl.Instance.GetPointingDir();
+        camDir.y = 0;
+
+        Quaternion targetRot = Quaternion.LookRotation(camDir, Vector3.up);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
     }
 
     void CheckJump()
