@@ -2,20 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class CameraControl : MonoBehaviour
 {
-    public Transform target;
-    public float rotationSpeed = 5f;
+    [SerializeField] Transform target;
+    [SerializeField] Transform camera;
+    [SerializeField] float rotationSpeed = 5f;
 
     [SerializeField] Vector3 offset;
+    [SerializeField] Vector3 rot;
+    [SerializeField] float maxXRot;
+    [SerializeField] float minXRot;
 
     void LateUpdate()
     {
+        if (!target) return;
+        if (!camera) return;
+
+        transform.position = target.position;
+        camera.transform.localPosition = Vector3.zero + offset;
+        camera.LookAt(target);
+
         Vector2 cursorDir = Vector2.zero;
         if (Application.isPlaying)
             cursorDir = CursorController.Instance.CursorDir(rotationSpeed);
 
-        transform.position = target.position + offset;
-        transform.rotation = target.rotation;
+        rot.x += -cursorDir.y * rotationSpeed * Time.deltaTime;
+        rot.y += cursorDir.x * rotationSpeed * Time.deltaTime;
+        rot.x = Mathf.Clamp(rot.x, minXRot, maxXRot);
+
+        transform.eulerAngles = rot;
     }
 }
